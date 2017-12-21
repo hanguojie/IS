@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tospur.is.dao.ProcessMapper" >
+ 	
+ 	<insert id="addrunFor" parameterType="com.tospur.is.vo.RunforVo" useGeneratedKeys="true" keyProperty="id">
+		insert into run_for (
+			workNo,
+			name,
+			department,
+			enrollType,
+			type,
+			enrollInfo,
+			create_time,
+			imgIcon
+		)
+		values(
+			#{workNo},
+			#{name},
+			#{department},
+			#{enrollType},
+			#{type},
+			#{enrollInfo},
+			now(),
+			#{imgIcon}
+		)
+ 	</insert>
+ 	
+ 	<select id="getPInfoByType" resultType="java.util.HashMap">
+		select * from run_for where type=#{type} and enrollType='3'
+ 	</select>
+ 	
+ 	<select id="findPListByType" resultType="java.util.HashMap">
+		select * from run_for where type=#{type} and enrollType in ('1','2') and status='1'
+ 	</select>
+ 	
+ 	<select id="findAddList" resultType="java.util.HashMap">
+		select * from run_for where enrollType in ('1','2') order by create_time
+ 	</select>
+ 	
+ 	<select id="getByWorkNo" resultType="java.util.HashMap">
+		select * from run_for where workNo=#{workNo}
+ 	</select>
+ 	
+ 	<insert id="addVote" parameterType="com.tospur.is.vo.Vote" useGeneratedKeys="true" keyProperty="id">
+		insert into vote (
+			ticketFor,
+			workNo,
+			day,
+			type
+		)
+		values(
+			#{ticketFor},
+			#{workNo},
+			now(),
+			#{type}
+		)
+ 	</insert>
+ 	
+ 	<select id="findVoteNum" resultType="java.util.HashMap">
+		select * from vote where type=#{type} and day=#{day} and workNo=#{workNo}
+ 	</select>
+ 	
+ 	<update id="updateStatus">
+ 		update run_for set status=#{status},type=#{type} where workNo=#{workNo}
+ 	</update>
+ 	
+ 	<select id="findRankingByType" resultType="java.util.HashMap">
+		select * from run_for f LEFT JOIN(
+		select count(1) as num,ticketFor from vote group by ticketfor) v
+		on f.workNo=v.ticketFor where status ='1' and type=#{type} 
+		ORDER BY v.num desc 
+ 	</select>
+ 	
+ 	<select id="findAllList" resultType="java.util.HashMap">
+ 		SELECT `name`, imgIcon, type 
+		FROM run_for
+		WHERE enrollType = '3'
+		UNION ALL
+			(SELECT `name`, imgIcon, type 
+			FROM run_for 
+			WHERE type = '1' AND `status` = '2' 
+			LIMIT 1)
+		UNION ALL
+			(SELECT `name`, imgIcon, type 
+			FROM run_for 
+			WHERE type = '2' AND `status` = '2' 
+			LIMIT 1)
+		UNION ALL
+			(SELECT `name`, imgIcon, type 
+			FROM run_for 
+			WHERE type = '3' AND `status` = '2' 
+			LIMIT 1)
+		UNION ALL
+			(SELECT `name`, imgIcon, type
+			FROM run_for 
+			WHERE type = '4' AND `status` = '2'
+			LIMIT 1)
+		ORDER BY type
+ 	</select>
+</mapper>

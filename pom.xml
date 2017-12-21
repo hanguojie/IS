@@ -1,0 +1,540 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.tospur</groupId>
+  <artifactId>IS</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>IS Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+ 	 <slf4j-api.version>1.7.21</slf4j-api.version>
+   	 <sysout-over-slf4j.version>1.0.2</sysout-over-slf4j.version>
+   	 <logback.version>1.1.6</logback.version>
+   	 
+   	 <spring.version>4.2.5.RELEASE</spring.version>
+   	 
+   	 <javaee-api.version>7.0</javaee-api.version>
+   	 <servlet-api.version>2.5</servlet-api.version>
+   	 
+   	 <fastjson.version>1.2.8</fastjson.version>
+     <fasterxml.version>2.7.3</fasterxml.version>
+   	 
+   	 <oracle-connector.version>6.0.0</oracle-connector.version>
+    
+   	 <druid.version>1.0.18</druid.version>
+   	 
+   	 <mysql-connector.version>5.1.38</mysql-connector.version>
+   	 
+   	 <mybatis-paginator.version>1.2.17</mybatis-paginator.version>
+   	 <mybatis.version>3.4.0</mybatis.version>
+   	 <mybatis-spring.version>1.3.0</mybatis-spring.version>
+   	 
+   	 <springfox-swagger2.version>2.4.0</springfox-swagger2.version>
+	  <!-- mybatis generator config file -->
+	    <mybatis.generator.configurationFile>
+	      ${basedir}/src/main/resources/mybatis/generatorConfig-contact.xml
+	    </mybatis.generator.configurationFile>
+	    <!-- jdbc driver path -->
+	    <mvn-local-repo-path>${user.home}/.m2/repository</mvn-local-repo-path>
+	    <jdbc-driver-path>
+	      ${mvn-local-repo-path}/mysql/mysql-connector-java/${mysql-connector.version}/mysql-connector-java-${mysql-connector.version}.jar
+	    </jdbc-driver-path>
+  </properties>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>oschina</id>
+      <name>oschina maven repo</name>
+      <!-- <url>http://maven.oschina.net/content/groups/public/</url> -->
+      <url>http://172.18.84.240:8081/nexus/content/repositories/public/</url>
+      <!-- <url>https://jcenter.bintray.com</url> -->
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <repositories>
+    <repository>
+      <id>oschina</id>
+      <name>oschina maven repo</name>
+      <!-- <url>http://maven.oschina.net/content/groups/public/</url> -->
+      <url>http://172.18.84.240:8081/nexus/content/repositories/public/</url>
+      <!-- <url>https://jcenter.bintray.com</url> -->
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <dependencies>
+  <!-- cas client -->
+	<dependency>
+		<groupId>org.jasig.cas.client</groupId>
+		<artifactId>cas-client-core</artifactId>
+		<version>3.2.1</version>
+	</dependency>
+	<dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpmime</artifactId>
+   		<version>4.3.6</version>
+	</dependency>	
+  
+  	<dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <!-- <scope>test</scope> -->
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+    
+    <!-- web begin -->
+      <dependency>
+        <groupId>javax</groupId>
+        <artifactId>javaee-api</artifactId>
+        <version>${javaee-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <!-- web end -->
+    
+    <dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>3.4</version>
+	</dependency>
+    <!-- logging start -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-ext</artifactId>
+      <version>${slf4j-api.version}</version>
+    </dependency>
+    <!-- 将 log4j 委托到 slf4j 委托到 slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4j-api.version}</version>
+    </dependency>
+    <!-- 将 JDK java.util.logging 委托到 slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j-api.version}</version>
+    </dependency>
+    <!-- 将 Jakarta Commons Logging (JCL) 委托到 slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j-api.version}</version>
+    </dependency>
+    <!-- 将 system.out 委托到 slf4j -->
+    <dependency>
+      <groupId>uk.org.lidalia</groupId>
+      <artifactId>sysout-over-slf4j</artifactId>
+      <version>${sysout-over-slf4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- logback -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- logging end -->
+    
+    <!-- spring start -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <!-- spring end -->
+    
+    <!-- mybatis start -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql-connector.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>oracle.jdbc</groupId>
+      <artifactId>driver</artifactId>
+      <version>${oracle-connector.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>${druid.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>${mybatis.version}</version>
+    </dependency>
+    <!-- 支持JDK8 的新日期时间类型 -->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-typehandlers-jsr310</artifactId>
+      <version>1.0.0</version>
+    </dependency>    
+    <dependency>
+      <groupId>com.github.miemiedev</groupId>
+      <artifactId>mybatis-paginator</artifactId>
+      <version>${mybatis-paginator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-spring</artifactId>
+      <version>${mybatis-spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis.caches</groupId>
+      <artifactId>mybatis-ehcache</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <version>2.6.11</version>
+    </dependency>
+    <!-- mybatis end -->
+    
+    <!-- springfox-swagger2 begin -->
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${springfox-swagger2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>${springfox-swagger2.version}</version>
+    </dependency>
+	  <dependency>
+		  <groupId>io.springfox</groupId>
+		  <artifactId>springfox-bean-validators</artifactId>
+		  <version>${springfox-swagger2.version}</version>
+	  </dependency>  
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId> <!-- use mapstruct-jdk8 for Java 8 or higher -->
+      <version>1.1.0.Beta1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-staticdocs</artifactId>
+      <version>${springfox-swagger2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- springfox-swagger2 end -->
+    
+    <!-- json and xml start -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>${fastjson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${fasterxml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${fasterxml.version}</version>
+    </dependency>
+    <!-- json and xml end -->
+    
+    <dependency>
+	    <groupId>commons-fileupload</groupId>
+	    <artifactId>commons-fileupload</artifactId>
+	    <version>1.3.1</version>
+	</dependency>
+    <!-- ad域验证jar -->
+    <dependency>
+      <groupId>jcifs</groupId>
+      <artifactId>jcifs</artifactId>
+      <version>1.3.17</version>
+    </dependency>
+    
+    <!--  redis suppport -->
+ 	<dependency>
+    	<groupId>org.springframework.data</groupId>
+    	<artifactId>spring-data-redis</artifactId>
+    	<version>1.7.2.RELEASE</version>
+	</dependency>
+	<dependency>
+    	<groupId>redis.clients</groupId>
+    	<artifactId>jedis</artifactId>
+    	<version>2.8.1</version>
+	</dependency>
+    <!--  redis suppport -->
+    
+    <dependency>
+	<groupId>com.googlecode.log4jdbc</groupId>
+		<artifactId>log4jdbc</artifactId>
+		<version>1.2</version>
+	</dependency>
+    
+    <!-- bean validation begin -->
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator</artifactId>
+		<version>5.2.4.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>javax.el</groupId>
+		<artifactId>javax.el-api</artifactId>
+		<version>3.0.1-b04</version>
+		<scope>provided</scope>
+	</dependency>  	
+	<!-- bean validation begin -->
+	<dependency>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.5.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+	<dependency>
+	    <groupId>com.microsoft.sqlserver</groupId>
+	    <artifactId>mssql-jdbc</artifactId>
+	    <version>6.1.0.jre8</version>
+	</dependency>
+  </dependencies>
+  
+  <build>
+    <finalName>IS</finalName>
+    
+    <pluginManagement>
+    	<plugins>
+    	<!-- 2016-04-01为止，最新的插件版本及设置 -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+          <configuration>
+            <createChecksum>true</createChecksum>
+          </configuration>
+        </plugin>
+
+		<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+            <encoding>utf8</encoding>
+            <!-- 调试标志的设置 -->
+            <debug>true</debug>
+            <debuglevel>lines,vars,source</debuglevel>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <!-- 对编译器的设置 -->
+            <fork>true</fork>
+            <meminitial>64m</meminitial>
+            <maxmem>512m</maxmem>
+          </configuration>
+        </plugin>
+
+		<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <archive>
+              <addMavenDescriptor>false</addMavenDescriptor>
+              <manifestEntries><!--在打包好的jar中添加元信息(编译时间和项目坐标)，以利于跟踪运行的具体版本 -->
+                <Build-Time>${maven.build.timestamp}</Build-Time>
+                <Archive-Id>${project.groupId}-${project.artifactId}-${project.version}</Archive-Id>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        
+    	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+	          <encoding>UTF-8</encoding>
+	          <warName>IS</warName>
+	          <!-- profile + maven-war-plugin -->
+	          <webResources>
+	            <resource>
+	              <directory>src/main/resources/environment/${profiles.active}</directory>
+	              <targetPath>WEB-INF/classes/environment/</targetPath>
+	            </resource>
+	          </webResources>
+	         <!--  <packagingExcludes>
+                  WEB-INF/classes/environment/development/**, 
+                  WEB-INF/classes/environment/test/**,
+                  WEB-INF/classes/environment/uat/**,
+                  WEB-INF/classes/mybatis/generatorConfig*
+              </packagingExcludes>  -->
+        </configuration> 
+        </plugin>
+        </plugins>
+    </pluginManagement>
+     <plugins> 
+     	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.mybatis.generator</groupId>
+        <artifactId>mybatis-generator-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <configuration>
+          <httpConnector>
+            <port>8080</port>
+            <name>default</name>
+          </httpConnector>
+          <stopKey>shutdown</stopKey>
+          <stopPort>9966</stopPort>
+          <scanIntervalSeconds>20</scanIntervalSeconds>
+          <!-- 如何重新部署项目，指定为automatic时，在scanIntervalSeconds周期检测到改动后，会自动重新部署项目 -->
+          <reload>manual</reload>
+          <dumpOnStart>false</dumpOnStart><!--启动之前是否把服务器的结构打印出来 -->
+          <webApp>
+            <contextPath>/${project.artifactId}</contextPath>
+          </webApp>
+          <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+            <filename>target/jetty-access-yyyy_MM_dd.log</filename>
+            <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+            <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+            <logTimeZone>GMT+8:00</logTimeZone>
+            <append>true</append>
+            <logServer>true</logServer>
+            <retainDays>30</retainDays>
+            <logCookies>true</logCookies>
+          </requestLog>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>us.fatehi</groupId>
+        <artifactId>schemacrawler-maven-plugin</artifactId>
+        <version>14.07.04</version>
+        <dependencies>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+     </plugins>
+    
+    <resources>
+     <!-- <resource> 根据运行环境来包含资源文件
+        <directory>src/main/resources/environment/${profiles.active}</directory>
+      </resource>  -->
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes> <!-- 排除掉跟运行环境相关的资源文件 -->
+          <exclude>environment/production/*</exclude>
+          <exclude>environment/test/*</exclude>
+          <exclude>environment/uat/*</exclude>
+          <exclude>environment/development/*</exclude>
+          <exclude>mybatis/generatorConfig*</exclude>
+        </excludes>
+      </resource>
+    </resources>
+  </build>
+   <profiles>
+    <profile>
+      <!-- 开发环境 -->
+      <id>development</id>
+      <properties>
+        <profiles.active>development</profiles.active>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <!-- 测试环境 -->
+      <id>test</id>
+      <properties>
+        <profiles.active>test</profiles.active>
+      </properties>
+    </profile>
+    <profile>
+      <!-- 预发布环境 -->
+      <id>uat</id>
+      <properties>
+        <profiles.active>uat</profiles.active>
+      </properties>
+    </profile>
+    <profile>
+      <!-- 生产环境 -->
+      <id>production</id>
+      <properties>
+        <profiles.active>production</profiles.active>
+      </properties>
+    </profile>
+  </profiles>
+</project>

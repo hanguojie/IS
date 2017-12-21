@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:context="http://www.springframework.org/schema/context"
+	     xmlns:mvc="http://www.springframework.org/schema/mvc" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		                       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<!-- 自动扫描 -->
+	<context:component-scan base-package="com.tospur" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 支持跨域，后续应该细化，这个粒度太粗了 -->
+	<mvc:cors>
+		<mvc:mapping path="/api/**" 
+			allowed-methods="GET,OPTIONS,POST,PUT,DELETE"
+			allowed-headers="accept, content-type, x-token"
+			allowed-origins="*"/>
+	</mvc:cors>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg value="UTF-8" />
+			</bean>
+			<!-- 将Jackson2HttpMessageConverter的默认格式化输出设为true -->
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="prettyPrint" value="true" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/swagger**"/>
+			<bean class="com.tospur.is.interceptor.SwaggerRoute"></bean>
+		</mvc:interceptor>
+	
+	</mvc:interceptors>
+
+	<!-- 定义JSP视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/views/" />
+		<property name="suffix" value=".jsp" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="order" value="2" /><!-- 多ViewResovler配置 -->
+	</bean>
+
+	<!-- 将Controller抛出的异常转到特定View, 保持SiteMesh的装饰效果 -->
+	<bean	class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.apache.shiro.authz.UnauthorizedException">error/noperms</prop>
+				<prop key="org.apache.shiro.authz.AuthorizationException">error/noperms</prop>
+				<prop key="java.lang.Throwable">error/500</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 容器默认的DefaultServletHandler处理 所有静态内容与无RequestMapping处理的URL -->
+	<mvc:default-servlet-handler />
+
+	<aop:config proxy-target-class="true"></aop:config>
+	
+  <!-- enables swgger ui -->
+  <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
+  <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+  <!-- include a swagger configuration -->
+  <bean name="/applicationSwaggerConfig" class="com.tospur.utils.SwaggerConfig"/>
+  <!-- <bean class="springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration" /> -->  
+  
+  
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="15728640" />
+		<property name="maxInMemorySize" value="2097152" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	<context:property-placeholder location="classpath:/environment/application.properties"/>  
+	
+</beans>

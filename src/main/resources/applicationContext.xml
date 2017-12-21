@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jee="http://www.springframework.org/schema/jee" 
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:aop="http://www.springframework.org/schema/aop" 
+       xmlns:util="http://www.springframework.org/schema/util"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		                       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		                       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+
+		                       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		                       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		                       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	     default-lazy-init="false">
+	<description>Spring公共配置</description>
+
+   
+    
+	<!-- 定义环境变量配置 -->									 
+<!-- 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
+<!-- 		<property name="ignoreResourceNotFound" value="true" /> -->
+<!-- 		<property name="order" value="1" />   -->
+<!--         <property name="ignoreUnresolvablePlaceholders" value="true" />  -->
+<!-- 	</bean> -->
+
+	<bean id="configProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:/environment/application.properties</value>
+				<value>classpath:/environment/jdbc.properties</value>
+				<value>classpath:/environment/oracle.jdbc.properties</value>
+				<value>classpath:/environment/redis.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="properties" ref="configProperties" />
+	</bean>
+
+<!-- 	<util:map id="globalParamMap" key-type="java.lang.String" -->
+<!-- 		value-type="java.lang.String"> -->
+<!-- 		<entry key="ip" value="${server.ip}" /> -->
+<!-- 	</util:map> -->
+	
+	<!-- IOC注解 -->
+	<context:component-scan base-package="com.tospur">
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+  	</context:component-scan>
+  
+	<tx:annotation-driven proxy-target-class="true"/>
+	
+	<!-- 配置事务注解@Transactional -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<context:annotation-config />
+
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="${druid.initialSize}" />
+		<property name="minIdle" value="${druid.minIdle}" />
+		<property name="maxActive" value="${druid.maxActive}" />
+		<property name="maxWait" value="${druid.maxWait}" />
+		<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+	</bean>
+	<bean id="oaDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${oa.jdbc.driver}" />
+		<property name="url" value="${oa.jdbc.url}" />
+		<property name="username" value="${oa.jdbc.username}" />
+		<property name="password" value="${oa.jdbc.password}" />
+	</bean>
+	<bean id="sqlServerDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+		<property name="url" value="jdbc:sqlserver://172.16.1.20:1433;databaseName=kqtospur" />
+		<property name="username" value="kqtospur" />
+		<property name="password" value="kqtospur" />
+	</bean>
+	
+	<!-- 配置事务管理器,使用jdbc事务 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- mybatis 配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations">
+			<list>
+			  <value>classpath*:/mybatis/**/*Mapper.xml</value>
+		  </list>
+		</property>
+		<!-- <property name="typeHandlersPackage" value="com.exmind.utils.mybatis.enums.typeHandler" /> -->
+	</bean>
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">  
+        <constructor-arg index="0" ref="sqlSessionFactory"/>  
+    </bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.tospur.**.dao.**" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<import resource="applicationContext-redis.xml"/>
+	<import resource="applicationContext-task.xml"/>
+</beans>
+
+
